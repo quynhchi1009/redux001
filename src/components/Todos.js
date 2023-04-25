@@ -1,19 +1,43 @@
 import React from "react";
-import { useSelector } from "react-redux";
-import { todosSelector } from "../store/reducers/todosSlice";
+import { useSelector, useDispatch } from "react-redux";
+import {
+    todosSelector,
+    markComplete,
+    deleteTodo,
+} from "../store/reducers/todosSlice";
+import TodoForm from "./Todoform";
 
 const Todos = () => {
-  const todos = useSelector(todosSelector)
+    const todos = useSelector(todosSelector);
+    const dispatch = useDispatch();
 
-  return (
-    <div className="todo-list">
-      <ul>
-        {todos.map((todo) => (
-          <li key={todo.id}>{todo.title}</li>
-        ))}
-      </ul>
-    </div>
-  );
+    const toggleTodoCompleted = todoId => {
+        // console.log(todoId);
+        dispatch(markComplete(todoId))
+    }
+
+    const deleteSingleTodo = todoId => {
+        dispatch(deleteTodo(todoId))
+    }
+
+    return (
+        <div className='todo-list'>
+            <TodoForm />
+            <ul>
+                {todos.map((todo) => (
+                    <li key={todo.id} className={todo.completed ? 'completed' : ''}>
+                        {todo.title}
+                        <input
+                            type='checkbox'
+                            checked={todo.completed}
+                            onChange={toggleTodoCompleted.bind(this, todo.id)}
+                        />
+                        <button onClick={deleteSingleTodo.bind(this, todo.id)}>Delete</button>
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
 };
 
 export default Todos;
